@@ -10,14 +10,8 @@ module UnicornAgent
 
     agent_guid 'tk.dmap.newrelic.unicorn'
     agent_version '1.0.0'
-    agent_config_options :application_name, :rails_root, :pid_name
+    agent_config_options :application_name, :host_name, :rails_root, :pid_name
     agent_human_labels("Unicorn Agent") { application_name }
-
-    attr_accessor :hostname
-
-    def cycle_start
-      self.hostname = `hostname`.strip
-    end
 
     def poll_cycle
       worker
@@ -27,7 +21,7 @@ module UnicornAgent
     private
 
     def worker
-      prefix = "worker/#{hostname}/"
+      prefix = "worker/#{host_name}/"
       units = :Workers
 
       status = NewRelic::Plugin::Unicorn::WorkerStatus.new rails_root, pid_name
@@ -38,7 +32,7 @@ module UnicornAgent
     end
 
     def memory
-      prefix = "memory/#{hostname}/"
+      prefix = "memory/#{host_name}/"
       units = :Bytes
 
       status = NewRelic::Plugin::Unicorn::MemoryStatus.new rails_root, pid_name
