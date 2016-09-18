@@ -10,7 +10,8 @@ Report Unicorn idle worker ratio & memory usage to NewRelic.
 2. Extract to the location you want to run the unicorn agent from
 3. Copy `config/template_newrelic_plugin.yml` to `config/newrelic_plugin.yml`
 4. Edit `config/newrelic_plugin.yml` and replace "YOUR_LICENSE_KEY_HERE"
-5. run `bin/newrelic_unicorn_agent`
+5. run `bundle install`
+6. run `bin/newrelic_unicorn_agent`
 
 ## Requirements
 
