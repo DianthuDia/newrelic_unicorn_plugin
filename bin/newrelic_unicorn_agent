@@ -21,23 +21,24 @@ module UnicornAgent
     private
 
     def worker
-      prefix = "worker/#{host_name}/"
       units = :Workers
-
       status = NewRelic::Plugin::Unicorn::WorkerStatus.new rails_root, pid_name
 
-      report_metric prefix+'idle_worker_count', units, status.idle_worker_count
-      report_metric prefix+'worker_count', units, status.worker_count
-      report_metric prefix+'idle_worker_ratio', :Percent, 100.0 * status.idle_worker_count / status.worker_count
+      %W[worker/host/#{host_name}/ worker/summary/].each do |prefix|
+        report_metric prefix+'idle_worker_count', units, status.idle_worker_count
+        report_metric prefix+'worker_count', units, status.worker_count
+        report_metric prefix+'idle_worker_ratio', :Percent, 100.0 * status.idle_worker_count / status.worker_count
+      end
     end
 
     def memory
-      prefix = "memory/#{host_name}/"
       units = :Bytes
 
       status = NewRelic::Plugin::Unicorn::MemoryStatus.new rails_root, pid_name
 
-      report_metric prefix+'total_memory', units, status.total_memory
+      %W[memory/host/#{host_name}/ memory/summary/].each do |prefix|
+        report_metric prefix+'total_memory', units, status.total_memory
+      end
     end
   end
 
