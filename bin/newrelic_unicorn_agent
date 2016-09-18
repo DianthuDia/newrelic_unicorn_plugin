@@ -2,7 +2,7 @@
 require "rubygems"
 require "bundler/setup"
 
-require "newrelic_plugin"
+require_relative "../lib/newrelic_unicorn_plugin"
 
 module UnicornAgent
 
