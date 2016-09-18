@@ -27,3 +27,5 @@ agents:
   # this is where configuration for agents belongs
   unicorn:
     application_name: YOUR_APPLICATION_NAME_HERE
+    rails_root: /path/to/rails/app
+    pid_name: unicorn.pid

@@ -10,16 +10,41 @@ module UnicornAgent
 
     agent_guid 'tk.dmap.newrelic.unicorn'
     agent_version '1.0.0'
-    agent_config_options :application_name
+    agent_config_options :application_name, :rails_root, :pid_name
     agent_human_labels("Unicorn Agent") { application_name }
 
-    def poll_cycle
-      x = Time.now.to_f * Math::PI * 2
-      report_metric "SIN",     "Value", Math.sin(x) + 1.0
-      report_metric "COS",     "Value", Math.cos(x) + 1.0
-      report_metric "BIASSIN", "Value", Math.sin(x) + 5.0
+    attr_accessor :hostname
+
+    def cycle_start
+      self.hostname = `hostname`.strip
     end
 
+    def poll_cycle
+      worker
+      memory
+    end
+
+    private
+
+    def worker
+      prefix = "worker/#{hostname}/"
+      units = :Workers
+
+      status = NewRelic::Plugin::Unicorn::WorkerStatus.new rails_root, pid_name
+
+      report_metric prefix+'idle_worker_count', units, status.idle_worker_count
+      report_metric prefix+'worker_count', units, status.worker_count
+      report_metric prefix+'idle_worker_ratio', :Percent, 100.0 * status.idle_worker_count / status.worker_count
+    end
+
+    def memory
+      prefix = "memory/#{hostname}/"
+      units = :Bytes
+
+      status = NewRelic::Plugin::Unicorn::MemoryStatus.new rails_root, pid_name
+
+      report_metric prefix+'total_memory', units, status.total_memory
+    end
   end
 
   #
