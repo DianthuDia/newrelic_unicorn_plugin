@@ -25,5 +25,8 @@ newrelic:
 #
 agents:
   # this is where configuration for agents belongs
-  example:
-    hertz: 1000
+  unicorn:
+    application_name: YOUR_APPLICATION_NAME_HERE
+    host_name: <%= `hostname` %>
+    rails_root: /path/to/rails/app
+    pid_name: unicorn.pid

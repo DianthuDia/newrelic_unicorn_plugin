@@ -1,0 +1,58 @@
+#! /usr/bin/env ruby
+require "rubygems"
+require "bundler/setup"
+
+require_relative "../lib/newrelic_unicorn_plugin"
+
+module UnicornAgent
+
+  class Agent < NewRelic::Plugin::Agent::Base
+
+    agent_guid 'tk.dmap.newrelic.unicorn'
+    agent_version '1.0.0'
+    agent_config_options :application_name, :host_name, :rails_root, :pid_name
+    agent_human_labels("Unicorn Agent") { application_name }
+
+    def poll_cycle
+      worker
+      memory
+    end
+
+    private
+
+    def worker
+      units = :Workers
+      status = NewRelic::Plugin::Unicorn::WorkerStatus.new rails_root, pid_name
+
+      %W[worker/host/#{host_name}/ worker/summary/].each do |prefix|
+        report_metric prefix+'idle_worker_count', units, status.idle_worker_count
+        report_metric prefix+'worker_count', units, status.worker_count
+        report_metric prefix+'idle_worker_ratio', :Percent, 100.0 * status.idle_worker_count / status.worker_count
+      end
+    end
+
+    def memory
+      units = :Bytes
+
+      status = NewRelic::Plugin::Unicorn::MemoryStatus.new rails_root, pid_name
+
+      %W[memory/host/#{host_name}/ memory/summary/].each do |prefix|
+        report_metric prefix+'total_memory', units, status.total_memory
+      end
+    end
+  end
+
+  #
+  # Register this agent with the component.
+  # The ExampleAgent is the name of the module that defines this
+  # driver (the module must contain at least three classes - a
+  # PollCycle, a Metric and an Agent class, as defined above).
+  #
+  NewRelic::Plugin::Setup.install_agent :unicorn, UnicornAgent
+
+  #
+  # Launch the agent; this never returns.
+  #
+  NewRelic::Plugin::Run.setup_and_run
+
+end
