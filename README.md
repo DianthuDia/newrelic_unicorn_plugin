@@ -1,5 +1,7 @@
 # NewRelic Unicorn Plugin
 
+![Logo](docs/images/unicorn.png)
+
 Report Unicorn idle worker ratio & memory usage to NewRelic.
 
 ## Install
@@ -16,6 +18,7 @@ Ruby 2.0 or greater.
 
 ## Credits
 - [Shinji Furuya](https://github.com/dfuruya), creator of [Unicon Munin Plugin](https://github.com/munin-monitoring/contrib/tree/master/plugins/unicorn)
+- Logo by [Dcj1018 – Unicorn Condom Logo](https://commons.wikimedia.org/wiki/File:Unicorn_Condom_Logo.png) / Adapted
 
 ## Contributing
 
